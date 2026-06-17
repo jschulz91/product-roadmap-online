@@ -1,0 +1,303 @@
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import {
+  ReactFlow,
+  Background,
+  BackgroundVariant,
+  MiniMap,
+  type OnConnect,
+  type OnNodeDrag,
+  type NodeMouseHandler,
+  useReactFlow,
+  type Edge,
+  type Node,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+
+import { GoalNode } from '../nodes/GoalNode';
+import { FeatureNode } from '../nodes/FeatureNode';
+import { TaskNode } from '../nodes/TaskNode';
+import { DependencyEdge } from '../edges/DependencyEdge';
+import { HierarchyEdge } from '../edges/HierarchyEdge';
+import { Toolbar } from '../layout/Toolbar';
+import { NodeContextMenu } from '../context-menu/NodeContextMenu';
+import { CanvasContextMenu } from '../context-menu/CanvasContextMenu';
+import { PresentationOverlay } from '../presentation/PresentationOverlay';
+import { useRoadmapStore } from '../../store/roadmap-store';
+import { useUIStore } from '../../store/ui-store';
+import { usePresentationStore } from '../../store/presentation-store';
+import { useKeyboardShortcuts } from '../../hooks/use-keyboard';
+import { ImportDialog } from '../dialogs/ImportDialog';
+import { demoNodes, demoEdges } from '../../lib/demo-data';
+import type { RoadmapNode } from '../../types/roadmap';
+
+const nodeTypes = {
+  goal: GoalNode,
+  feature: FeatureNode,
+  task: TaskNode,
+};
+
+const edgeTypes = {
+  dependency: DependencyEdge,
+  hierarchy: HierarchyEdge,
+};
+
+function findGoalAncestorId(nodeId: string, nodeMap: Map<string, RoadmapNode>): string | null {
+  let current = nodeMap.get(nodeId);
+  while (current) {
+    if (current.data.level === 'goal') return current.id;
+    if (!current.data.parentId) return null;
+    current = nodeMap.get(current.data.parentId);
+  }
+  return null;
+}
+
+export function RoadmapCanvas() {
+  const nodes = useRoadmapStore(s => s.nodes);
+  const edges = useRoadmapStore(s => s.edges);
+  const viewport = useRoadmapStore(s => s.viewport);
+  const getVisibleNodes = useRoadmapStore(s => s.getVisibleNodes);
+  const getAllEdges = useRoadmapStore(s => s.getAllEdges);
+  const updateNodePosition = useRoadmapStore(s => s.updateNodePosition);
+  const addDependencyEdge = useRoadmapStore(s => s.addDependencyEdge);
+  const setViewport = useRoadmapStore(s => s.setViewport);
+  const runAutoLayout = useRoadmapStore(s => s.runAutoLayout);
+
+  const selectNode = useUIStore(s => s.selectNode);
+  const theme = useUIStore(s => s.theme);
+  const addToast = useUIStore(s => s.addToast);
+  const isPresentationMode = useUIStore(s => s.isPresentationMode);
+
+  const explorerLevel = usePresentationStore(s => s.level);
+  const focusedGoalId = usePresentationStore(s => s.focusedGoalId);
+  const focusedFeatureId = usePresentationStore(s => s.focusedFeatureId);
+
+  const { importOpen, setImportOpen } = useKeyboardShortcuts();
+  const { fitView } = useReactFlow();
+
+  const [contextMenu, setContextMenu] = useState<{
+    type: 'node' | 'canvas';
+    x: number;
+    y: number;
+    node?: RoadmapNode;
+  } | null>(null);
+
+  useEffect(() => {
+    if (nodes.length === 0) {
+      const storedData = localStorage.getItem('roadmap-storage');
+      if (!storedData || JSON.parse(storedData).state?.nodes?.length === 0) {
+        useRoadmapStore.setState({
+          nodes: demoNodes,
+          edges: demoEdges,
+          projectName: 'Demo Roadmap',
+        });
+        setTimeout(() => {
+          runAutoLayout();
+          setTimeout(() => fitView({ padding: 0.3, duration: 500 }), 100);
+        }, 100);
+      }
+    }
+  }, []);
+
+  const nodeMap = useMemo(() => new Map(nodes.map(n => [n.id, n])), [nodes]);
+
+  const visibleNodes = useMemo(() => {
+    const visible = getVisibleNodes();
+
+    if (!isPresentationMode || explorerLevel === 'overview') {
+      return visible.map(n => ({
+        ...n,
+        className: isPresentationMode ? 'explorer-focused' : undefined,
+      })) as Node[];
+    }
+
+    return visible.map(n => {
+      const goalAncestorId = findGoalAncestorId(n.id, nodeMap);
+      let dimClass: string;
+
+      if (goalAncestorId !== focusedGoalId) {
+        dimClass = 'explorer-dimmed';
+      } else if (
+        explorerLevel === 'feature' &&
+        n.data.level === 'feature' &&
+        n.id !== focusedFeatureId
+      ) {
+        dimClass = 'explorer-semi-dimmed';
+      } else {
+        dimClass = 'explorer-focused';
+      }
+
+      return { ...n, className: dimClass } as Node;
+    });
+  }, [nodes, getVisibleNodes, isPresentationMode, explorerLevel, focusedGoalId, focusedFeatureId, nodeMap]);
+
+  const allEdges = useMemo(() => {
+    const all = getAllEdges();
+    const visibleIds = new Set(visibleNodes.map(n => n.id));
+
+    return all
+      .filter(e => visibleIds.has(e.source) && visibleIds.has(e.target))
+      .map(({ style: edgeStyle, ...rest }) => {
+        let edgeClassName: string | undefined;
+        if (isPresentationMode && explorerLevel !== 'overview' && focusedGoalId) {
+          const sourceGoal = findGoalAncestorId(rest.source, nodeMap);
+          const targetGoal = findGoalAncestorId(rest.target, nodeMap);
+          if (sourceGoal !== focusedGoalId && targetGoal !== focusedGoalId) {
+            edgeClassName = 'explorer-edge-dimmed';
+          } else {
+            edgeClassName = 'explorer-edge-focused';
+          }
+        }
+        return {
+          ...rest,
+          data: { style: edgeStyle ?? 'solid' },
+          className: edgeClassName,
+        };
+      }) as Edge[];
+  }, [nodes, edges, getAllEdges, visibleNodes, isPresentationMode, explorerLevel, focusedGoalId, nodeMap]);
+
+  const onConnect: OnConnect = useCallback(({ source, target }) => {
+    if (isPresentationMode) return;
+    if (source && target) {
+      const success = addDependencyEdge(source, target);
+      if (!success) {
+        addToast('Kante konnte nicht erstellt werden (Duplikat oder Zyklus)', 'error');
+      }
+    }
+  }, [addDependencyEdge, addToast, isPresentationMode]);
+
+  const onNodeDragStop: OnNodeDrag = useCallback((_event, node) => {
+    if (isPresentationMode) return;
+    updateNodePosition(node.id, node.position);
+  }, [updateNodePosition, isPresentationMode]);
+
+  const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
+    if (isPresentationMode) {
+      const roadmapNode = nodes.find(n => n.id === node.id);
+      if (!roadmapNode) return;
+
+      const store = usePresentationStore.getState();
+      if (store.isTransitioning) return;
+
+      if (roadmapNode.data.level === 'goal') {
+        const goalNodes = nodes.filter(n => n.data.level === 'goal');
+        const idx = goalNodes.findIndex(g => g.id === node.id);
+        store.focusGoal(node.id, idx >= 0 ? idx : 0);
+      } else if (roadmapNode.data.level === 'feature') {
+        const goalId = findGoalAncestorId(node.id, nodeMap);
+        if (goalId === store.focusedGoalId) {
+          const features = nodes.filter(n => n.data.parentId === goalId && n.data.level === 'feature');
+          const idx = features.findIndex(f => f.id === node.id);
+          store.focusFeature(node.id, idx >= 0 ? idx : 0);
+        }
+      }
+      return;
+    }
+    selectNode(node.id);
+  }, [isPresentationMode, selectNode, nodes, nodeMap]);
+
+  const onPaneClick = useCallback(() => {
+    if (isPresentationMode) return;
+    selectNode(null);
+    setContextMenu(null);
+  }, [selectNode, isPresentationMode]);
+
+  const onNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
+    if (isPresentationMode) return;
+    event.preventDefault();
+    const roadmapNode = nodes.find(n => n.id === node.id);
+    if (roadmapNode) {
+      setContextMenu({ type: 'node', x: event.clientX, y: event.clientY, node: roadmapNode });
+    }
+  }, [nodes, isPresentationMode]);
+
+  const onPaneContextMenu = useCallback((event: MouseEvent | React.MouseEvent) => {
+    if (isPresentationMode) return;
+    event.preventDefault();
+    setContextMenu({ type: 'canvas', x: (event as React.MouseEvent).clientX, y: (event as React.MouseEvent).clientY });
+  }, [isPresentationMode]);
+
+  return (
+    <div className="flex-1 relative">
+      <ReactFlow
+        nodes={visibleNodes}
+        edges={allEdges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
+        onNodeContextMenu={onNodeContextMenu}
+        onPaneContextMenu={onPaneContextMenu}
+        onMoveEnd={(_event, vp) => setViewport(vp)}
+        defaultViewport={viewport}
+        fitView
+        fitViewOptions={{ padding: 0.3 }}
+        connectionLineStyle={{ stroke: '#94A3B8', strokeWidth: 2, strokeDasharray: '6 3' }}
+        deleteKeyCode={null}
+        nodesDraggable={!isPresentationMode}
+        nodesConnectable={!isPresentationMode}
+        proOptions={{ hideAttribution: true }}
+        className={`bg-gray-50 dark:bg-gray-950 ${isPresentationMode ? 'explorer-mode' : ''}`}
+      >
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={20}
+          size={1}
+          color={theme === 'dark' ? '#374151' : '#D1D5DB'}
+        />
+        {!isPresentationMode && (
+          <MiniMap
+            nodeColor={(node) => {
+              const status = (node.data as any)?.status;
+              if (status === 'done') return '#059669';
+              if (status === 'now') return '#2563EB';
+              if (status === 'next') return '#F59E0B';
+              return '#9CA3AF';
+            }}
+            maskColor={theme === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)'}
+            className="!bg-white dark:!bg-gray-800 !border !border-gray-200 dark:!border-gray-700"
+            pannable
+            zoomable
+          />
+        )}
+        {!isPresentationMode && <Toolbar />}
+        <PresentationOverlay />
+
+        <svg>
+          <defs>
+            <marker
+              id="dependency-arrow"
+              viewBox="0 0 12 12"
+              refX="10"
+              refY="6"
+              markerWidth="8"
+              markerHeight="8"
+              orient="auto-start-reverse"
+            >
+              <path d="M 2 2 L 10 6 L 2 10 z" fill="#94A3B8" />
+            </marker>
+          </defs>
+        </svg>
+      </ReactFlow>
+
+      {!isPresentationMode && contextMenu?.type === 'node' && contextMenu.node && (
+        <NodeContextMenu
+          node={contextMenu.node}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+      {!isPresentationMode && contextMenu?.type === 'canvas' && (
+        <CanvasContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+
+      <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
+    </div>
+  );
+}
