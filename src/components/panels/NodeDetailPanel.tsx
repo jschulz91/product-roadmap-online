@@ -53,8 +53,8 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="fixed right-0 top-0 h-full w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 shadow-xl z-50 overflow-y-auto"
         >
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
+          <div style={{ padding: '24px' }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: '20px' }}>
               <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 {levelConfig[node.data.level].label} bearbeiten
               </span>
@@ -66,9 +66,9 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
               </button>
             </div>
 
-            <div className="space-y-5">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Titel</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">Titel</label>
                 <input
                   type="text"
                   value={title}
@@ -79,7 +79,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Untertitel</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">Untertitel</label>
                 <input
                   type="text"
                   value={subtitle}
@@ -90,7 +90,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Beschreibung</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">Beschreibung</label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
@@ -101,13 +101,13 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Status</label>
-                <div className="flex gap-2">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">Status</label>
+                <div className="flex gap-2.5">
                   {(Object.keys(statusConfig) as NodeStatus[]).map(status => (
                     <button
                       key={status}
                       onClick={() => updateNode(node.id, { status })}
-                      className={`flex-1 px-2 py-2 text-xs font-bold rounded-lg border-2 transition-all
+                      className={`flex-1 px-2.5 py-2.5 text-xs font-bold rounded-lg border-2 transition-all
                         ${node.data.status === status
                           ? 'border-blue-400 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
                           : 'border-gray-200 dark:border-gray-700 text-gray-500 hover:border-gray-300'
@@ -121,8 +121,8 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
 
               {node.data.level === 'goal' && (
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Farbe</label>
-                  <div className="flex gap-2.5 flex-wrap mb-4">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">Farbe</label>
+                  <div className="flex gap-3 flex-wrap mb-5">
                     {COLOR_PRESETS.map(preset => (
                       <button
                         key={preset.hex}
@@ -173,7 +173,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
               {childLevel && (
                 <button
                   onClick={() => addNode(node.id, childLevel)}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
                 >
                   <Plus size={14} />
                   {levelConfig[node.data.level].childLabel}
@@ -182,17 +182,17 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
 
               {node.data.childrenIds.length > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
                     Untergeordnete Elemente ({node.data.childrenIds.length})
                   </label>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {node.data.childrenIds.map(childId => {
                       const child = nodes.find(n => n.id === childId);
                       if (!child) return null;
                       return (
                         <div
                           key={childId}
-                          className="flex items-center gap-2.5 px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-xs text-gray-700 dark:text-gray-300"
+                          className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg text-xs text-gray-700 dark:text-gray-300"
                         >
                           <span className={`w-2 h-2 rounded-full ${statusConfig[child.data.status].dotColor}`} />
                           <span className="truncate">{child.data.title}</span>
@@ -203,13 +203,13 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => {
                     deleteNode(node.id);
                     setPanelOpen(false);
                   }}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-medium text-red-600 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
                 >
                   <Trash2 size={14} />
                   {levelConfig[node.data.level].label} loeschen

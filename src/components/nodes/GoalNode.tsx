@@ -39,11 +39,14 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
       style={colorStyles}
     >
       <Handle type="target" position={Position.Top} className={handleClass} />
+      <Handle type="source" position={Position.Top} id="top-source" className={handleClass} />
       <Handle type="target" position={Position.Left} id="left-target" className={handleClass} />
+      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
       <Handle type="source" position={Position.Right} id="right-source" className={handleClass} />
+      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
 
-      <div className="px-10 pt-8 pb-8">
-        <div className="flex items-center justify-between mb-6">
+      <div style={{ padding: '20px 24px' }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: '14px' }}>
           <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
           {hasChildren && (
             <button
@@ -61,19 +64,18 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
           {data.title}
         </h3>
         {data.subtitle && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{data.subtitle}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400" style={{ marginTop: '6px' }}>{data.subtitle}</p>
         )}
 
         {hasChildren && (
-          <div className="mt-6">
+          <div style={{ marginTop: '14px' }}>
             <ProgressBar progress={progress} accentColor={accent} />
           </div>
         )}
       </div>
 
       <Handle type="source" position={Position.Bottom} className={handleClass} />
-      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
-      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
+      <Handle type="target" position={Position.Bottom} id="bottom-target" className={handleClass} />
     </div>
   );
 });

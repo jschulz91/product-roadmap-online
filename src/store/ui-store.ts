@@ -6,11 +6,14 @@ interface UIState {
   selectedNodeId: string | null;
   isPanelOpen: boolean;
   isPresentationMode: boolean;
+  menuEdgeId: string | null;
   toasts: { id: string; message: string; type: 'success' | 'error' | 'info' }[];
 
   toggleTheme: () => void;
   setTheme: (theme: 'light' | 'dark') => void;
   selectNode: (id: string | null) => void;
+  openEdgeMenu: (id: string) => void;
+  closeEdgeMenu: () => void;
   setPanelOpen: (open: boolean) => void;
   startPresentation: () => void;
   stopPresentation: () => void;
@@ -25,6 +28,7 @@ export const useUIStore = create<UIState>()(
       selectedNodeId: null,
       isPanelOpen: false,
       isPresentationMode: false,
+      menuEdgeId: null,
       toasts: [],
 
       toggleTheme: () => {
@@ -38,13 +42,17 @@ export const useUIStore = create<UIState>()(
         set({ theme });
       },
 
-      selectNode: (id) => set({ selectedNodeId: id, isPanelOpen: id !== null }),
+      selectNode: (id) => set({ selectedNodeId: id, isPanelOpen: id !== null, menuEdgeId: null }),
+
+      openEdgeMenu: (id) => set({ menuEdgeId: id }),
+      closeEdgeMenu: () => set({ menuEdgeId: null }),
       setPanelOpen: (open) => set({ isPanelOpen: open, selectedNodeId: open ? get().selectedNodeId : null }),
 
       startPresentation: () => set({
         isPresentationMode: true,
         selectedNodeId: null,
         isPanelOpen: false,
+        menuEdgeId: null,
       }),
       stopPresentation: () => set({ isPresentationMode: false }),
 

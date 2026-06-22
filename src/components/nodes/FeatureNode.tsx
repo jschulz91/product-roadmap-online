@@ -52,11 +52,14 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
       style={colorStyles}
     >
       <Handle type="target" position={Position.Top} className={handleClass} />
+      <Handle type="source" position={Position.Top} id="top-source" className={handleClass} />
       <Handle type="target" position={Position.Left} id="left-target" className={handleClass} />
+      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
       <Handle type="source" position={Position.Right} id="right-source" className={handleClass} />
+      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
 
-      <div className="px-8 pt-6 pb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div style={{ padding: '16px 20px' }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: '10px' }}>
           <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
           {hasChildren && (
             <button
@@ -74,19 +77,18 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
           {data.title}
         </h3>
         {data.subtitle && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{data.subtitle}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400" style={{ marginTop: '4px' }}>{data.subtitle}</p>
         )}
 
         {hasChildren && (
-          <div className="mt-4">
+          <div style={{ marginTop: '12px' }}>
             <ProgressBar progress={progress} />
           </div>
         )}
       </div>
 
       <Handle type="source" position={Position.Bottom} className={handleClass} />
-      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
-      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
+      <Handle type="target" position={Position.Bottom} id="bottom-target" className={handleClass} />
     </div>
     </motion.div>
   );

@@ -4,6 +4,7 @@ import type {
   nodeLevelSchema,
   edgeTypeSchema,
   edgeStyleSchema,
+  edgeDirectionSchema,
   roadmapNodeDataSchema,
   roadmapNodeSchema,
   roadmapEdgeSchema,
@@ -14,6 +15,7 @@ export type NodeStatus = z.infer<typeof nodeStatusSchema>;
 export type NodeLevel = z.infer<typeof nodeLevelSchema>;
 export type EdgeType = z.infer<typeof edgeTypeSchema>;
 export type EdgeStyle = z.infer<typeof edgeStyleSchema>;
+export type EdgeDirection = z.infer<typeof edgeDirectionSchema>;
 export type RoadmapNodeData = z.infer<typeof roadmapNodeDataSchema>;
 export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
 export type RoadmapEdge = z.infer<typeof roadmapEdgeSchema>;

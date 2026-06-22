@@ -5,8 +5,10 @@ import {
   BackgroundVariant,
   MiniMap,
   type OnConnect,
+  type OnReconnect,
   type OnNodeDrag,
   type NodeMouseHandler,
+  type EdgeMouseHandler,
   useReactFlow,
   type Edge,
   type Node,
@@ -59,10 +61,13 @@ export function RoadmapCanvas() {
   const getAllEdges = useRoadmapStore(s => s.getAllEdges);
   const updateNodePosition = useRoadmapStore(s => s.updateNodePosition);
   const addDependencyEdge = useRoadmapStore(s => s.addDependencyEdge);
+  const reconnectEdge = useRoadmapStore(s => s.reconnectEdge);
   const setViewport = useRoadmapStore(s => s.setViewport);
   const runAutoLayout = useRoadmapStore(s => s.runAutoLayout);
 
   const selectNode = useUIStore(s => s.selectNode);
+  const openEdgeMenu = useUIStore(s => s.openEdgeMenu);
+  const closeEdgeMenu = useUIStore(s => s.closeEdgeMenu);
   const theme = useUIStore(s => s.theme);
   const addToast = useUIStore(s => s.addToast);
   const isPresentationMode = useUIStore(s => s.isPresentationMode);
@@ -149,21 +154,31 @@ export function RoadmapCanvas() {
         }
         return {
           ...rest,
-          data: { style: edgeStyle ?? 'solid' },
+          data: { style: edgeStyle ?? 'solid', direction: (rest as any).direction ?? 'forward' },
           className: edgeClassName,
+          reconnectable: rest.type === 'dependency' && !isPresentationMode,
         };
       }) as Edge[];
   }, [nodes, edges, getAllEdges, visibleNodes, isPresentationMode, explorerLevel, focusedGoalId, nodeMap]);
 
-  const onConnect: OnConnect = useCallback(({ source, target }) => {
+  const onConnect: OnConnect = useCallback(({ source, target, sourceHandle, targetHandle }) => {
     if (isPresentationMode) return;
     if (source && target) {
-      const success = addDependencyEdge(source, target);
+      const success = addDependencyEdge(source, target, undefined, sourceHandle, targetHandle);
       if (!success) {
         addToast('Kante konnte nicht erstellt werden (Duplikat oder Zyklus)', 'error');
       }
     }
   }, [addDependencyEdge, addToast, isPresentationMode]);
+
+  const onReconnect: OnReconnect = useCallback((oldEdge, newConnection) => {
+    if (isPresentationMode) return;
+    if (oldEdge.type !== 'dependency') return;
+    const success = reconnectEdge(oldEdge.id, newConnection);
+    if (!success) {
+      addToast('Kante konnte nicht umgehaengt werden (Duplikat oder Zyklus)', 'error');
+    }
+  }, [reconnectEdge, addToast, isPresentationMode]);
 
   const onNodeDragStop: OnNodeDrag = useCallback((_event, node) => {
     if (isPresentationMode) return;
@@ -198,8 +213,16 @@ export function RoadmapCanvas() {
   const onPaneClick = useCallback(() => {
     if (isPresentationMode) return;
     selectNode(null);
+    closeEdgeMenu();
     setContextMenu(null);
-  }, [selectNode, isPresentationMode]);
+  }, [selectNode, closeEdgeMenu, isPresentationMode]);
+
+  const onEdgeDoubleClick: EdgeMouseHandler = useCallback((event, edge) => {
+    if (isPresentationMode) return;
+    if (edge.type !== 'dependency') return;
+    event.stopPropagation();
+    openEdgeMenu(edge.id);
+  }, [openEdgeMenu, isPresentationMode]);
 
   const onNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
     if (isPresentationMode) return;
@@ -224,8 +247,10 @@ export function RoadmapCanvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onConnect={onConnect}
+        onReconnect={onReconnect}
         onNodeDragStop={onNodeDragStop}
         onNodeClick={onNodeClick}
+        onEdgeDoubleClick={onEdgeDoubleClick}
         onPaneClick={onPaneClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}

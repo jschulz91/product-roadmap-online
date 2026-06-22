@@ -43,11 +43,14 @@ export const TaskNode = memo(function TaskNode({ id, data, selected }: TaskNodeP
       style={colorStyles}
     >
       <Handle type="target" position={Position.Top} className={handleClass} />
+      <Handle type="source" position={Position.Top} id="top-source" className={handleClass} />
       <Handle type="target" position={Position.Left} id="left-target" className={handleClass} />
+      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
       <Handle type="source" position={Position.Right} id="right-source" className={handleClass} />
+      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
 
-      <div className="px-6 py-5">
-        <div className="mb-3">
+      <div style={{ padding: '14px 18px' }}>
+        <div style={{ marginBottom: '10px' }}>
           <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
         </div>
         <h3
@@ -57,8 +60,9 @@ export const TaskNode = memo(function TaskNode({ id, data, selected }: TaskNodeP
           {data.title}
         </h3>
         {data.subtitle && (
-          <p className={`text-xs text-gray-500 dark:text-gray-400 mt-1
+          <p className={`text-xs text-gray-500 dark:text-gray-400
             ${data.status === 'done' ? 'line-through' : ''}`}
+            style={{ marginTop: '4px' }}
           >
             {data.subtitle}
           </p>
@@ -66,8 +70,7 @@ export const TaskNode = memo(function TaskNode({ id, data, selected }: TaskNodeP
       </div>
 
       <Handle type="source" position={Position.Bottom} className={handleClass} />
-      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
-      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
+      <Handle type="target" position={Position.Bottom} id="bottom-target" className={handleClass} />
     </div>
     </motion.div>
   );

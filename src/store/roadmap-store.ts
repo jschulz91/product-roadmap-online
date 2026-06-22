@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
-import type { RoadmapNode, RoadmapEdge, RoadmapNodeData, NodeLevel, NodeStatus, Viewport, EdgeStyle } from '../types/roadmap';
+import type { RoadmapNode, RoadmapEdge, RoadmapNodeData, NodeLevel, NodeStatus, Viewport, EdgeStyle, EdgeDirection } from '../types/roadmap';
 import type { RoadmapProject } from '../types/roadmap';
 import { wouldCreateCycle } from '../lib/cycle-detection';
 import { applyAutoLayout } from '../lib/layout';
@@ -32,8 +32,9 @@ interface RoadmapState {
   deleteNode: (id: string) => void;
   cycleStatus: (id: string) => void;
 
-  addDependencyEdge: (source: string, target: string, style?: EdgeStyle) => boolean;
-  updateEdge: (id: string, updates: { style?: EdgeStyle; label?: string }) => void;
+  addDependencyEdge: (source: string, target: string, style?: EdgeStyle, sourceHandle?: string | null, targetHandle?: string | null) => boolean;
+  updateEdge: (id: string, updates: { style?: EdgeStyle; label?: string; direction?: EdgeDirection }) => void;
+  reconnectEdge: (oldEdgeId: string, connection: { source: string | null; target: string | null; sourceHandle?: string | null; targetHandle?: string | null }) => boolean;
   removeEdge: (id: string) => void;
 
   reparentNode: (nodeId: string, newParentId: string | null) => boolean;
@@ -225,7 +226,7 @@ export const useRoadmapStore = create<RoadmapState>()(
         state.updateNode(id, { status: nextStatus });
       },
 
-      addDependencyEdge: (source, target, style = 'solid') => {
+      addDependencyEdge: (source, target, style = 'solid', sourceHandle = null, targetHandle = null) => {
         const state = get();
         if (source === target) return false;
         if (state.edges.some(e => e.source === source && e.target === target && e.type === 'dependency')) return false;
@@ -236,8 +237,11 @@ export const useRoadmapStore = create<RoadmapState>()(
           id: `dep-${nanoid()}`,
           source,
           target,
+          sourceHandle,
+          targetHandle,
           type: 'dependency',
           style,
+          direction: 'forward',
         };
         set({ edges: [...state.edges, edge] });
         return true;
@@ -251,6 +255,30 @@ export const useRoadmapStore = create<RoadmapState>()(
             e.id === id ? { ...e, ...updates } : e
           ),
         });
+      },
+
+      reconnectEdge: (oldEdgeId, connection) => {
+        const state = get();
+        const edge = state.edges.find(e => e.id === oldEdgeId);
+        // Only stored dependency edges can be reconnected (hierarchy edges are derived).
+        if (!edge) return false;
+
+        const { source, target, sourceHandle = null, targetHandle = null } = connection;
+        if (!source || !target || source === target) return false;
+
+        const others = state.edges.filter(e => e.id !== oldEdgeId);
+        if (others.some(e => e.source === source && e.target === target && e.type === 'dependency')) return false;
+        if (wouldCreateCycle(others, source, target)) return false;
+
+        state.pushHistory();
+        set({
+          edges: state.edges.map(e =>
+            e.id === oldEdgeId
+              ? { ...e, source, target, sourceHandle, targetHandle }
+              : e
+          ),
+        });
+        return true;
       },
 
       removeEdge: (id) => {

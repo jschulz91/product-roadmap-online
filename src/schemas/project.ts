@@ -4,6 +4,7 @@ export const nodeStatusSchema = z.enum(['done', 'now', 'next', 'later']);
 export const nodeLevelSchema = z.enum(['goal', 'feature', 'task']);
 export const edgeTypeSchema = z.enum(['dependency', 'hierarchy']);
 export const edgeStyleSchema = z.enum(['solid', 'dashed']);
+export const edgeDirectionSchema = z.enum(['forward', 'backward', 'both', 'none']);
 
 export const roadmapNodeDataSchema = z.object({
   title: z.string().min(1).max(200),
@@ -30,8 +31,11 @@ export const roadmapEdgeSchema = z.object({
   id: z.string(),
   source: z.string(),
   target: z.string(),
+  sourceHandle: z.string().nullable().optional(),
+  targetHandle: z.string().nullable().optional(),
   type: edgeTypeSchema,
   style: edgeStyleSchema.default('solid'),
+  direction: edgeDirectionSchema.default('forward'),
   animated: z.boolean().optional(),
   label: z.string().max(100).optional(),
 });
