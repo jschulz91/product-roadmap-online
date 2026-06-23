@@ -1,0 +1,1434 @@
+{
+  "version": "1.0",
+  "name": "MachineEye – Konnektoren (Rückblick)",
+  "description": "Retrospektive Roadmap des Bereichs Konnektoren: bereits erreichte Ziele, Features und Tasks (alle abgeschlossen).",
+  "createdAt": "2026-06-23T00:00:00.000Z",
+  "updatedAt": "2026-06-23T00:00:00.000Z",
+  "nodes": [
+    {
+      "id": "t-1",
+      "type": "task",
+      "position": {
+        "x": 0,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektor-Karten mit Status (Aktiviert / Verbunden)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-uebersicht",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-2",
+      "type": "task",
+      "position": {
+        "x": 300,
+        "y": 480
+      },
+      "data": {
+        "title": "Anzeige konfigurierter Tags pro Konnektor",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-uebersicht",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-3",
+      "type": "task",
+      "position": {
+        "x": 600,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektoren durchsuchen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-uebersicht",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-4",
+      "type": "task",
+      "position": {
+        "x": 900,
+        "y": 480
+      },
+      "data": {
+        "title": "Filter nach Protokoll & Zurücksetzen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-uebersicht",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-konnektor-uebersicht",
+      "type": "feature",
+      "position": {
+        "x": 450,
+        "y": 240
+      },
+      "data": {
+        "title": "Konnektor-Übersicht",
+        "subtitle": "Alle Konnektoren auf einen Blick",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-konnektor-verwaltung",
+        "childrenIds": [
+          "t-1",
+          "t-2",
+          "t-3",
+          "t-4"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-5",
+      "type": "task",
+      "position": {
+        "x": 1200,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektor hinzufügen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-lebenszyklus",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-6",
+      "type": "task",
+      "position": {
+        "x": 1500,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektor bearbeiten",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-lebenszyklus",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-7",
+      "type": "task",
+      "position": {
+        "x": 1800,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektor löschen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-lebenszyklus",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-8",
+      "type": "task",
+      "position": {
+        "x": 2100,
+        "y": 480
+      },
+      "data": {
+        "title": "Konnektor starten / stoppen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-lebenszyklus",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-konnektor-lebenszyklus",
+      "type": "feature",
+      "position": {
+        "x": 1650,
+        "y": 240
+      },
+      "data": {
+        "title": "Konnektor-Lebenszyklus",
+        "subtitle": "Anlegen, bearbeiten, betreiben",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-konnektor-verwaltung",
+        "childrenIds": [
+          "t-5",
+          "t-6",
+          "t-7",
+          "t-8"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-9",
+      "type": "task",
+      "position": {
+        "x": 2400,
+        "y": 480
+      },
+      "data": {
+        "title": "Statusanzeige (Konnektor & Verbindung)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-detail",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-10",
+      "type": "task",
+      "position": {
+        "x": 2700,
+        "y": 480
+      },
+      "data": {
+        "title": "Allgemeine Informationen (Host, Port, Beschreibung)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-detail",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-11",
+      "type": "task",
+      "position": {
+        "x": 3000,
+        "y": 480
+      },
+      "data": {
+        "title": "Audit-Infos (Erstellt / Zuletzt geändert)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-konnektor-detail",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-konnektor-detail",
+      "type": "feature",
+      "position": {
+        "x": 2700,
+        "y": 240
+      },
+      "data": {
+        "title": "Konnektor-Detailansicht",
+        "subtitle": "Status & Stammdaten",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-konnektor-verwaltung",
+        "childrenIds": [
+          "t-9",
+          "t-10",
+          "t-11"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "g-konnektor-verwaltung",
+      "type": "goal",
+      "position": {
+        "x": 1600,
+        "y": 0
+      },
+      "data": {
+        "title": "Konnektor-Verwaltung",
+        "subtitle": "Zentrale Verwaltung der Datenquellen",
+        "description": "Zentrale Konfiguration und Verwaltung aller Konnektoren zur Anbindung von Datenquellen an MachineEye.",
+        "status": "done",
+        "level": "goal",
+        "parentId": null,
+        "childrenIds": [
+          "f-konnektor-uebersicht",
+          "f-konnektor-lebenszyklus",
+          "f-konnektor-detail"
+        ],
+        "collapsed": false,
+        "color": "#3B82F6",
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-12",
+      "type": "task",
+      "position": {
+        "x": 3600,
+        "y": 480
+      },
+      "data": {
+        "title": "Host & Port konfigurieren",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-verbindung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-13",
+      "type": "task",
+      "position": {
+        "x": 3900,
+        "y": 480
+      },
+      "data": {
+        "title": "Authentifizierung Benutzername / Passwort",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-verbindung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-14",
+      "type": "task",
+      "position": {
+        "x": 4200,
+        "y": 480
+      },
+      "data": {
+        "title": "Anonyme Authentifizierung",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-verbindung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-opcua-verbindung",
+      "type": "feature",
+      "position": {
+        "x": 3900,
+        "y": 240
+      },
+      "data": {
+        "title": "Verbindungskonfiguration",
+        "subtitle": "Endpunkt & Authentifizierung",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-opcua-anbindung",
+        "childrenIds": [
+          "t-12",
+          "t-13",
+          "t-14"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-15",
+      "type": "task",
+      "position": {
+        "x": 4500,
+        "y": 480
+      },
+      "data": {
+        "title": "Verbindungs-Timeout & Keep-Alive-Intervall",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-16",
+      "type": "task",
+      "position": {
+        "x": 4800,
+        "y": 480
+      },
+      "data": {
+        "title": "Wiederverbindung (Intervall & max. Versuche)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-17",
+      "type": "task",
+      "position": {
+        "x": 5100,
+        "y": 480
+      },
+      "data": {
+        "title": "Sitzungs-Timeout",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-18",
+      "type": "task",
+      "position": {
+        "x": 5400,
+        "y": 480
+      },
+      "data": {
+        "title": "Standard-Abtast- & Veröffentlichungsintervall",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-19",
+      "type": "task",
+      "position": {
+        "x": 5700,
+        "y": 480
+      },
+      "data": {
+        "title": "Standard-Warteschlangengröße",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-20",
+      "type": "task",
+      "position": {
+        "x": 6000,
+        "y": 480
+      },
+      "data": {
+        "title": "Max. überwachte Elemente pro Subscription",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-betrieb",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-opcua-betrieb",
+      "type": "feature",
+      "position": {
+        "x": 5250,
+        "y": 240
+      },
+      "data": {
+        "title": "Betriebseinstellungen",
+        "subtitle": "Timeouts & Standardwerte",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-opcua-anbindung",
+        "childrenIds": [
+          "t-15",
+          "t-16",
+          "t-17",
+          "t-18",
+          "t-19",
+          "t-20"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-21",
+      "type": "task",
+      "position": {
+        "x": 6300,
+        "y": 480
+      },
+      "data": {
+        "title": "Live-Verbindungsstatus",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-monitoring",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-22",
+      "type": "task",
+      "position": {
+        "x": 6600,
+        "y": 480
+      },
+      "data": {
+        "title": "Automatische Wiederverbindung",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-opcua-monitoring",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-opcua-monitoring",
+      "type": "feature",
+      "position": {
+        "x": 6450,
+        "y": 240
+      },
+      "data": {
+        "title": "Verbindungsüberwachung",
+        "subtitle": "Status & Selbstheilung",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-opcua-anbindung",
+        "childrenIds": [
+          "t-21",
+          "t-22"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "g-opcua-anbindung",
+      "type": "goal",
+      "position": {
+        "x": 5200,
+        "y": 0
+      },
+      "data": {
+        "title": "OPC-UA-Anbindung",
+        "subtitle": "OPC-UA-Server als Datenquelle",
+        "description": "Anbindung und Konfiguration von OPC-UA-Servern inkl. Authentifizierung und Betriebseinstellungen.",
+        "status": "done",
+        "level": "goal",
+        "parentId": null,
+        "childrenIds": [
+          "f-opcua-verbindung",
+          "f-opcua-betrieb",
+          "f-opcua-monitoring"
+        ],
+        "collapsed": false,
+        "color": "#A855F7",
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-23",
+      "type": "task",
+      "position": {
+        "x": 7200,
+        "y": 480
+      },
+      "data": {
+        "title": "Server-Baum navigieren (Server / DeviceSet / PLC / ServerInterfaces)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-adressraum-browser",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-24",
+      "type": "task",
+      "position": {
+        "x": 7500,
+        "y": 480
+      },
+      "data": {
+        "title": "Tag-Liste mit Datentyp & letztem Wert",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-adressraum-browser",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-25",
+      "type": "task",
+      "position": {
+        "x": 7800,
+        "y": 480
+      },
+      "data": {
+        "title": "Tags durchsuchen & nach Datentyp filtern",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-adressraum-browser",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-adressraum-browser",
+      "type": "feature",
+      "position": {
+        "x": 7500,
+        "y": 240
+      },
+      "data": {
+        "title": "Adressraum-Browser",
+        "subtitle": "Server-Baum navigieren",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-tags-subscriptions",
+        "childrenIds": [
+          "t-23",
+          "t-24",
+          "t-25"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-26",
+      "type": "task",
+      "position": {
+        "x": 8100,
+        "y": 480
+      },
+      "data": {
+        "title": "Anzeigename festlegen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-einzel-subscription",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-27",
+      "type": "task",
+      "position": {
+        "x": 8400,
+        "y": 480
+      },
+      "data": {
+        "title": "Abtast- & Veröffentlichungsintervall",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-einzel-subscription",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-28",
+      "type": "task",
+      "position": {
+        "x": 8700,
+        "y": 480
+      },
+      "data": {
+        "title": "Warteschlangengröße",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-einzel-subscription",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-29",
+      "type": "task",
+      "position": {
+        "x": 9000,
+        "y": 480
+      },
+      "data": {
+        "title": "Labels vergeben",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-einzel-subscription",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-einzel-subscription",
+      "type": "feature",
+      "position": {
+        "x": 8550,
+        "y": 240
+      },
+      "data": {
+        "title": "Einzel-Subscription",
+        "subtitle": "Tag gezielt abonnieren",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-tags-subscriptions",
+        "childrenIds": [
+          "t-26",
+          "t-27",
+          "t-28",
+          "t-29"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-30",
+      "type": "task",
+      "position": {
+        "x": 9300,
+        "y": 480
+      },
+      "data": {
+        "title": "Rekursiver Scan eines Ordners",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-massenabonnement",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-31",
+      "type": "task",
+      "position": {
+        "x": 9600,
+        "y": 480
+      },
+      "data": {
+        "title": "Umbenennungsregeln (Suchen / Ersetzen)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-massenabonnement",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-32",
+      "type": "task",
+      "position": {
+        "x": 9900,
+        "y": 480
+      },
+      "data": {
+        "title": "Prüfen mit Status-Filtern (bereit / abonniert / Probleme)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-massenabonnement",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-33",
+      "type": "task",
+      "position": {
+        "x": 10200,
+        "y": 480
+      },
+      "data": {
+        "title": "Erkennung nicht unterstützter Typen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-massenabonnement",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-34",
+      "type": "task",
+      "position": {
+        "x": 10500,
+        "y": 480
+      },
+      "data": {
+        "title": "Mehrfachauswahl & Sammel-Abonnement",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-massenabonnement",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-massenabonnement",
+      "type": "feature",
+      "position": {
+        "x": 9900,
+        "y": 240
+      },
+      "data": {
+        "title": "Massenabonnement",
+        "subtitle": "Scan, Umbenennen, Prüfen",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-tags-subscriptions",
+        "childrenIds": [
+          "t-30",
+          "t-31",
+          "t-32",
+          "t-33",
+          "t-34"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-35",
+      "type": "task",
+      "position": {
+        "x": 10800,
+        "y": 480
+      },
+      "data": {
+        "title": "Tag-Tabelle mit Status (Verbunden)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-tag-verwaltung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-36",
+      "type": "task",
+      "position": {
+        "x": 11100,
+        "y": 480
+      },
+      "data": {
+        "title": "Letzter Wert je Tag",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-tag-verwaltung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-37",
+      "type": "task",
+      "position": {
+        "x": 11400,
+        "y": 480
+      },
+      "data": {
+        "title": "Tag löschen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-tag-verwaltung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-38",
+      "type": "task",
+      "position": {
+        "x": 11700,
+        "y": 480
+      },
+      "data": {
+        "title": "Tags durchsuchen & filtern",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-tag-verwaltung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-tag-verwaltung",
+      "type": "feature",
+      "position": {
+        "x": 11250,
+        "y": 240
+      },
+      "data": {
+        "title": "Tag-Übersicht & -Verwaltung",
+        "subtitle": "Abonnierte Tags pflegen",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-tags-subscriptions",
+        "childrenIds": [
+          "t-35",
+          "t-36",
+          "t-37",
+          "t-38"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "g-tags-subscriptions",
+      "type": "goal",
+      "position": {
+        "x": 9300,
+        "y": 0
+      },
+      "data": {
+        "title": "Tags & Subscriptions",
+        "subtitle": "Tags durchsuchen & abonnieren",
+        "description": "Adressraum durchsuchen, Tags einzeln oder in Masse abonnieren und laufend verwalten.",
+        "status": "done",
+        "level": "goal",
+        "parentId": null,
+        "childrenIds": [
+          "f-adressraum-browser",
+          "f-einzel-subscription",
+          "f-massenabonnement",
+          "f-tag-verwaltung"
+        ],
+        "collapsed": false,
+        "color": "#10B981",
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-39",
+      "type": "task",
+      "position": {
+        "x": 12300,
+        "y": 480
+      },
+      "data": {
+        "title": "Schreibbarkeit vom Konnektor übernehmen",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-schreibbarkeit",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-40",
+      "type": "task",
+      "position": {
+        "x": 12600,
+        "y": 480
+      },
+      "data": {
+        "title": "Tag auf \"Schreibbar\" beschränken",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-schreibbarkeit",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-41",
+      "type": "task",
+      "position": {
+        "x": 12900,
+        "y": 480
+      },
+      "data": {
+        "title": "Tag auf \"Schreibgeschützt\" beschränken",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-schreibbarkeit",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-schreibbarkeit",
+      "type": "feature",
+      "position": {
+        "x": 12600,
+        "y": 240
+      },
+      "data": {
+        "title": "Schreibbarkeitssteuerung",
+        "subtitle": "Zugriff je Tag festlegen",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-datensteuerung-speicherung",
+        "childrenIds": [
+          "t-39",
+          "t-40",
+          "t-41"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-42",
+      "type": "task",
+      "position": {
+        "x": 13200,
+        "y": 480
+      },
+      "data": {
+        "title": "Langfristige Speicherung aktivieren",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-langzeitspeicherung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-43",
+      "type": "task",
+      "position": {
+        "x": 13500,
+        "y": 480
+      },
+      "data": {
+        "title": "Zeitlimit (1 Wo – 5 J)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-langzeitspeicherung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-44",
+      "type": "task",
+      "position": {
+        "x": 13800,
+        "y": 480
+      },
+      "data": {
+        "title": "Anzahl-Limit (1k – 1M)",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-langzeitspeicherung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "t-45",
+      "type": "task",
+      "position": {
+        "x": 14100,
+        "y": 480
+      },
+      "data": {
+        "title": "Zwischenspeicher-Status je Tag",
+        "subtitle": "",
+        "description": "",
+        "status": "done",
+        "level": "task",
+        "parentId": "f-langzeitspeicherung",
+        "childrenIds": [],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "f-langzeitspeicherung",
+      "type": "feature",
+      "position": {
+        "x": 13650,
+        "y": 240
+      },
+      "data": {
+        "title": "Langzeitspeicherung",
+        "subtitle": "Historische Daten aufbewahren",
+        "description": "",
+        "status": "done",
+        "level": "feature",
+        "parentId": "g-datensteuerung-speicherung",
+        "childrenIds": [
+          "t-42",
+          "t-43",
+          "t-44",
+          "t-45"
+        ],
+        "collapsed": false,
+        "color": null,
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "g-datensteuerung-speicherung",
+      "type": "goal",
+      "position": {
+        "x": 13125,
+        "y": 0
+      },
+      "data": {
+        "title": "Datensteuerung & Speicherung",
+        "subtitle": "Schreibzugriff & Langzeitdaten",
+        "description": "Steuerung der Schreibbarkeit je Tag und Konfiguration der Langzeitspeicherung.",
+        "status": "done",
+        "level": "goal",
+        "parentId": null,
+        "childrenIds": [
+          "f-schreibbarkeit",
+          "f-langzeitspeicherung"
+        ],
+        "collapsed": false,
+        "color": "#F59E0B",
+        "hours": 0,
+        "createdAt": "2026-06-23T00:00:00.000Z",
+        "updatedAt": "2026-06-23T00:00:00.000Z"
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "settings": {
+    "theme": "light",
+    "autoLayout": true
+  }
+}

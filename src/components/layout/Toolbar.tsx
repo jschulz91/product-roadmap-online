@@ -1,22 +1,28 @@
 import { memo } from 'react';
-import { Plus, LayoutGrid, Maximize, Undo2, Redo2, ZoomIn, ZoomOut } from 'lucide-react';
+import { Plus, LayoutGrid, Maximize, Undo2, Redo2, ZoomIn, ZoomOut, Square } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 import { useRoadmapStore } from '../../store/roadmap-store';
 import { useUIStore } from '../../store/ui-store';
 
 export const Toolbar = memo(function Toolbar() {
   const addNode = useRoadmapStore(s => s.addNode);
+  const addArea = useRoadmapStore(s => s.addArea);
   const runAutoLayout = useRoadmapStore(s => s.runAutoLayout);
   const undo = useRoadmapStore(s => s.undo);
   const redo = useRoadmapStore(s => s.redo);
   const canUndo = useRoadmapStore(s => s.canUndo);
   const canRedo = useRoadmapStore(s => s.canRedo);
   const selectNode = useUIStore(s => s.selectNode);
-  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  const { fitView, zoomIn, zoomOut, screenToFlowPosition } = useReactFlow();
 
   const handleAddGoal = () => {
     const id = addNode(null, 'goal');
     selectNode(id);
+  };
+
+  const handleAddArea = () => {
+    const pos = screenToFlowPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    addArea({ x: pos.x - 180, y: pos.y - 120 });
   };
 
   return (
@@ -28,6 +34,15 @@ export const Toolbar = memo(function Toolbar() {
       >
         <Plus size={14} />
         Ziel
+      </button>
+
+      <button
+        onClick={handleAddArea}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        title="Bereich hinzufügen"
+      >
+        <Square size={14} />
+        Bereich
       </button>
 
       <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />

@@ -8,6 +8,8 @@ import {
   type OnConnect,
   type OnReconnect,
   type OnNodeDrag,
+  type OnNodesChange,
+  type SelectionDragHandler,
   type NodeMouseHandler,
   type EdgeMouseHandler,
   useReactFlow,
@@ -19,6 +21,7 @@ import '@xyflow/react/dist/style.css';
 import { GoalNode } from '../nodes/GoalNode';
 import { FeatureNode } from '../nodes/FeatureNode';
 import { TaskNode } from '../nodes/TaskNode';
+import { AreaNode } from '../nodes/AreaNode';
 import { DependencyEdge } from '../edges/DependencyEdge';
 import { HierarchyEdge } from '../edges/HierarchyEdge';
 import { Toolbar } from '../layout/Toolbar';
@@ -37,6 +40,7 @@ const nodeTypes = {
   goal: GoalNode,
   feature: FeatureNode,
   task: TaskNode,
+  area: AreaNode,
 };
 
 const edgeTypes = {
@@ -57,11 +61,14 @@ function findGoalAncestorId(nodeId: string, nodeMap: Map<string, RoadmapNode>): 
 export function RoadmapCanvas() {
   const nodes = useRoadmapStore(s => s.nodes);
   const edges = useRoadmapStore(s => s.edges);
+  const areas = useRoadmapStore(s => s.areas);
   const hierarchyEdges = useRoadmapStore(s => s.hierarchyEdges);
   const viewport = useRoadmapStore(s => s.viewport);
   const getVisibleNodes = useRoadmapStore(s => s.getVisibleNodes);
   const getAllEdges = useRoadmapStore(s => s.getAllEdges);
-  const updateNodePosition = useRoadmapStore(s => s.updateNodePosition);
+  const updateNodePositions = useRoadmapStore(s => s.updateNodePositions);
+  const updateAreaPositions = useRoadmapStore(s => s.updateAreaPositions);
+  const updateAreaRect = useRoadmapStore(s => s.updateAreaRect);
   const addDependencyEdge = useRoadmapStore(s => s.addDependencyEdge);
   const reconnectEdge = useRoadmapStore(s => s.reconnectEdge);
   const reconnectHierarchyEdge = useRoadmapStore(s => s.reconnectHierarchyEdge);
@@ -89,6 +96,8 @@ export function RoadmapCanvas() {
     node?: RoadmapNode;
   } | null>(null);
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     if (nodes.length === 0) {
       const storedData = localStorage.getItem('roadmap-storage');
@@ -114,6 +123,7 @@ export function RoadmapCanvas() {
     if (!isPresentationMode || explorerLevel === 'overview') {
       return visible.map(n => ({
         ...n,
+        selected: selectedIds.has(n.id),
         className: isPresentationMode ? 'explorer-focused' : undefined,
       })) as Node[];
     }
@@ -136,7 +146,7 @@ export function RoadmapCanvas() {
 
       return { ...n, className: dimClass } as Node;
     });
-  }, [nodes, getVisibleNodes, isPresentationMode, explorerLevel, focusedGoalId, focusedFeatureId, nodeMap]);
+  }, [nodes, getVisibleNodes, isPresentationMode, explorerLevel, focusedGoalId, focusedFeatureId, nodeMap, selectedIds]);
 
   const allEdges = useMemo(() => {
     const all = getAllEdges();
@@ -164,6 +174,24 @@ export function RoadmapCanvas() {
       }) as Edge[];
   }, [nodes, edges, hierarchyEdges, getAllEdges, visibleNodes, isPresentationMode, explorerLevel, focusedGoalId, nodeMap]);
 
+  const allNodes = useMemo(() => {
+    const areaNodes = areas.map(a => ({
+      id: a.id,
+      type: 'area',
+      position: a.position,
+      width: a.width,
+      height: a.height,
+      data: { name: a.name, color: a.color },
+      selected: selectedIds.has(a.id),
+      draggable: !isPresentationMode,
+      selectable: !isPresentationMode,
+      connectable: false,
+      zIndex: -1,
+      style: { width: a.width, height: a.height },
+    })) as Node[];
+    return [...areaNodes, ...visibleNodes];
+  }, [areas, visibleNodes, selectedIds, isPresentationMode]);
+
   const onConnect: OnConnect = useCallback(({ source, target, sourceHandle, targetHandle }) => {
     if (isPresentationMode) return;
     if (source && target) {
@@ -189,12 +217,49 @@ export function RoadmapCanvas() {
     }
   }, [reconnectEdge, reconnectHierarchyEdge, addToast, isPresentationMode]);
 
-  const onNodeDragStop: OnNodeDrag = useCallback((_event, node) => {
-    if (isPresentationMode) return;
-    updateNodePosition(node.id, node.position);
-  }, [updateNodePosition, isPresentationMode]);
+  const areaIdSet = useMemo(() => new Set(areas.map(a => a.id)), [areas]);
 
-  const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
+  const onNodesChange: OnNodesChange = useCallback((changes) => {
+    if (isPresentationMode) return;
+    setSelectedIds(prev => {
+      let next: Set<string> | null = null;
+      for (const c of changes) {
+        if (c.type === 'select') {
+          if (!next) next = new Set(prev);
+          if (c.selected) next.add(c.id);
+          else next.delete(c.id);
+        }
+      }
+      return next ?? prev;
+    });
+    // Areas are controlled, so apply their live resize/move changes to the store.
+    for (const c of changes) {
+      if (c.type === 'dimensions' && c.dimensions && areaIdSet.has(c.id)) {
+        updateAreaRect(c.id, { width: c.dimensions.width, height: c.dimensions.height });
+      } else if (c.type === 'position' && c.position && areaIdSet.has(c.id)) {
+        updateAreaRect(c.id, { position: c.position });
+      }
+    }
+  }, [isPresentationMode, areaIdSet, updateAreaRect]);
+
+  const commitMoves = useCallback((moved: Node[]) => {
+    const areaUpdates = moved.filter(n => n.type === 'area').map(n => ({ id: n.id, position: n.position }));
+    const nodeUpdates = moved.filter(n => n.type !== 'area').map(n => ({ id: n.id, position: n.position }));
+    if (areaUpdates.length) updateAreaPositions(areaUpdates);
+    if (nodeUpdates.length) updateNodePositions(nodeUpdates);
+  }, [updateAreaPositions, updateNodePositions]);
+
+  const onNodeDragStop: OnNodeDrag = useCallback((_event, node, draggedNodes) => {
+    if (isPresentationMode) return;
+    commitMoves(draggedNodes && draggedNodes.length > 0 ? draggedNodes : [node]);
+  }, [commitMoves, isPresentationMode]);
+
+  const onSelectionDragStop: SelectionDragHandler<Node> = useCallback((_event, draggedNodes) => {
+    if (isPresentationMode) return;
+    commitMoves(draggedNodes);
+  }, [commitMoves, isPresentationMode]);
+
+  const onNodeClick: NodeMouseHandler = useCallback((event, node) => {
     if (isPresentationMode) {
       const roadmapNode = nodes.find(n => n.id === node.id);
       if (!roadmapNode) return;
@@ -216,6 +281,10 @@ export function RoadmapCanvas() {
       }
       return;
     }
+    // Areas are edited inline on the canvas, not via the detail panel.
+    if (node.type === 'area') return;
+    // During a multi-selection (Shift/Ctrl/Cmd) keep the detail panel as-is.
+    if (event.shiftKey || event.metaKey || event.ctrlKey) return;
     selectNode(node.id);
   }, [isPresentationMode, selectNode, nodes, nodeMap]);
 
@@ -250,14 +319,16 @@ export function RoadmapCanvas() {
   return (
     <div className="flex-1 relative">
       <ReactFlow
-        nodes={visibleNodes}
+        nodes={allNodes}
         edges={allEdges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         onConnect={onConnect}
         onReconnect={onReconnect}
+        onNodesChange={onNodesChange}
         onNodeDragStop={onNodeDragStop}
+        onSelectionDragStop={onSelectionDragStop}
         onNodeClick={onNodeClick}
         onEdgeDoubleClick={onEdgeDoubleClick}
         onPaneClick={onPaneClick}

@@ -41,6 +41,15 @@ export const roadmapEdgeSchema = z.object({
   label: z.string().max(100).optional(),
 });
 
+export const roadmapAreaSchema = z.object({
+  id: z.string(),
+  name: z.string().max(120).default(''),
+  position: z.object({ x: z.number(), y: z.number() }),
+  width: z.number().min(40).default(320),
+  height: z.number().min(40).default(220),
+  color: z.string().default('#3B82F6'),
+});
+
 export const viewportSchema = z.object({
   x: z.number(),
   y: z.number(),
@@ -55,6 +64,7 @@ export const roadmapProjectSchema = z.object({
   updatedAt: z.string(),
   nodes: z.array(roadmapNodeSchema),
   edges: z.array(roadmapEdgeSchema),
+  areas: z.array(roadmapAreaSchema).default([]),
   viewport: viewportSchema,
   settings: z.object({
     theme: z.enum(['light', 'dark']),

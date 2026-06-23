@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
-import type { RoadmapNode, RoadmapEdge, RoadmapNodeData, NodeLevel, NodeStatus, Viewport, EdgeStyle, EdgeDirection } from '../types/roadmap';
+import type { RoadmapNode, RoadmapEdge, RoadmapArea, RoadmapNodeData, NodeLevel, NodeStatus, Viewport, EdgeStyle, EdgeDirection } from '../types/roadmap';
 import type { RoadmapProject } from '../types/roadmap';
 import { wouldCreateCycle } from '../lib/cycle-detection';
 import { applyAutoLayout } from '../lib/layout';
@@ -24,6 +24,7 @@ interface RoadmapState {
   projectDescription: string;
   nodes: RoadmapNode[];
   edges: RoadmapEdge[];
+  areas: RoadmapArea[];
   hierarchyEdges: Record<string, HierarchyEdgeOverride>;
   viewport: Viewport;
   autoLayout: boolean;
@@ -52,6 +53,13 @@ interface RoadmapState {
   toggleCollapse: (nodeId: string) => void;
 
   updateNodePosition: (id: string, position: { x: number; y: number }) => void;
+  updateNodePositions: (updates: Array<{ id: string; position: { x: number; y: number } }>) => void;
+
+  addArea: (position: { x: number; y: number }) => string;
+  updateArea: (id: string, updates: Partial<Pick<RoadmapArea, 'name' | 'color'>>) => void;
+  updateAreaRect: (id: string, rect: { position?: { x: number; y: number }; width?: number; height?: number }) => void;
+  updateAreaPositions: (updates: Array<{ id: string; position: { x: number; y: number } }>) => void;
+  removeArea: (id: string) => void;
   runAutoLayout: () => void;
   setViewport: (viewport: Viewport) => void;
 
@@ -121,6 +129,7 @@ export const useRoadmapStore = create<RoadmapState>()(
       projectDescription: '',
       nodes: [],
       edges: [],
+      areas: [],
       hierarchyEdges: {},
       viewport: { x: 0, y: 0, zoom: 1 },
       autoLayout: true,
@@ -392,6 +401,71 @@ export const useRoadmapStore = create<RoadmapState>()(
         }));
       },
 
+      updateNodePositions: (updates) => {
+        if (updates.length === 0) return;
+        const posMap = new Map(updates.map(u => [u.id, u.position]));
+        set(state => ({
+          nodes: state.nodes.map(n => {
+            const pos = posMap.get(n.id);
+            return pos ? { ...n, position: pos } : n;
+          }),
+        }));
+      },
+
+      addArea: (position) => {
+        const state = get();
+        state.pushHistory();
+        const id = `area-${nanoid()}`;
+        const area: RoadmapArea = {
+          id,
+          name: 'Neuer Bereich',
+          position,
+          width: 360,
+          height: 240,
+          color: DEFAULT_HEX,
+        };
+        set({ areas: [...state.areas, area] });
+        return id;
+      },
+
+      updateArea: (id, updates) => {
+        const state = get();
+        state.pushHistory();
+        set({ areas: state.areas.map(a => (a.id === id ? { ...a, ...updates } : a)) });
+      },
+
+      updateAreaRect: (id, rect) => {
+        set(state => ({
+          areas: state.areas.map(a =>
+            a.id === id
+              ? {
+                  ...a,
+                  position: rect.position ?? a.position,
+                  width: rect.width ?? a.width,
+                  height: rect.height ?? a.height,
+                }
+              : a
+          ),
+        }));
+      },
+
+      updateAreaPositions: (updates) => {
+        if (updates.length === 0) return;
+        const posMap = new Map(updates.map(u => [u.id, u.position]));
+        set(state => ({
+          areas: state.areas.map(a => {
+            const pos = posMap.get(a.id);
+            return pos ? { ...a, position: pos } : a;
+          }),
+        }));
+      },
+
+      removeArea: (id) => {
+        const state = get();
+        state.pushHistory();
+        set({ areas: state.areas.filter(a => a.id !== id) });
+      },
+
       runAutoLayout: () => {
         const state = get();
         const allEdges = state.getAllEdges();
@@ -452,6 +526,7 @@ export const useRoadmapStore = create<RoadmapState>()(
           updatedAt: timestamp,
           nodes: state.nodes,
           edges: state.edges,
+          areas: state.areas,
           viewport: state.viewport,
           settings: {
             theme: (document.documentElement.classList.contains('dark') ? 'dark' : 'light') as 'light' | 'dark',
@@ -466,6 +541,7 @@ export const useRoadmapStore = create<RoadmapState>()(
           projectDescription: project.description,
           nodes: project.nodes,
           edges: project.edges,
+          areas: project.areas ?? [],
           hierarchyEdges: {},
           viewport: project.viewport,
           autoLayout: project.settings.autoLayout,
@@ -566,6 +642,7 @@ export const useRoadmapStore = create<RoadmapState>()(
         projectDescription: state.projectDescription,
         nodes: state.nodes,
         edges: state.edges,
+        areas: state.areas,
         hierarchyEdges: state.hierarchyEdges,
         viewport: state.viewport,
         autoLayout: state.autoLayout,

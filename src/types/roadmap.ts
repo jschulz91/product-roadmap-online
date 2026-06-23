@@ -8,6 +8,7 @@ import type {
   roadmapNodeDataSchema,
   roadmapNodeSchema,
   roadmapEdgeSchema,
+  roadmapAreaSchema,
   roadmapProjectSchema,
 } from '../schemas/project';
 
@@ -19,6 +20,7 @@ export type EdgeDirection = z.infer<typeof edgeDirectionSchema>;
 export type RoadmapNodeData = z.infer<typeof roadmapNodeDataSchema>;
 export type RoadmapNode = z.infer<typeof roadmapNodeSchema>;
 export type RoadmapEdge = z.infer<typeof roadmapEdgeSchema>;
+export type RoadmapArea = z.infer<typeof roadmapAreaSchema>;
 export type RoadmapProject = z.infer<typeof roadmapProjectSchema>;
 
 export interface Viewport {
