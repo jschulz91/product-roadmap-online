@@ -41,7 +41,11 @@ export const usePresentationStore = create<PresentationState>()((set, get) => ({
   preCollapseState: new Map(),
 
   getGoalNodes: () => {
-    return useRoadmapStore.getState().nodes.filter(n => n.data.level === 'goal');
+    // Presentation order is controlled via the goal-level `order` index.
+    // Array.sort is stable, so equal orders keep their existing order.
+    return useRoadmapStore.getState().nodes
+      .filter(n => n.data.level === 'goal')
+      .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
   },
 
   getFeaturesOfGoal: (goalId: string) => {

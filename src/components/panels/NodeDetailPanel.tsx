@@ -25,6 +25,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
   const [description, setDescription] = useState('');
   const [hexInput, setHexInput] = useState('');
   const [hoursInput, setHoursInput] = useState('');
+  const [orderInput, setOrderInput] = useState('');
 
   useEffect(() => {
     if (node) {
@@ -33,14 +34,23 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
       setDescription(node.data.description);
       setHexInput(node.data.color ?? '');
       setHoursInput(String(node.data.hours ?? 0));
+      setOrderInput(String(node.data.order ?? 0));
     }
-  }, [node?.id, node?.data.title, node?.data.subtitle, node?.data.description, node?.data.color, node?.data.hours]);
+  }, [node?.id, node?.data.title, node?.data.subtitle, node?.data.description, node?.data.color, node?.data.hours, node?.data.order]);
 
   if (!node) return null;
 
   const childLevel = levelConfig[node.data.level].childLevel;
   const isLeaf = node.data.level === 'task';
+  const isGoal = node.data.level === 'goal';
   const hours = calculateHours(node.id, nodes);
+
+  const commitOrder = () => {
+    const parsed = Math.round(Number(orderInput));
+    const value = Number.isFinite(parsed) ? parsed : 0;
+    setOrderInput(String(value));
+    updateNode(node.id, { order: value });
+  };
 
   const commitHours = () => {
     const parsed = Number(hoursInput.replace(',', '.'));
@@ -165,6 +175,26 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
                   </div>
                 )}
               </div>
+
+              {isGoal && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
+                    Reihenfolge (Präsentation)
+                  </label>
+                  <input
+                    type="number"
+                    step="10"
+                    value={orderInput}
+                    onChange={e => setOrderInput(e.target.value)}
+                    onBlur={commitOrder}
+                    onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+                    className="w-full px-3.5 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-400">
+                    Kleinere Werte kommen zuerst. Standard in 10er-Schritten, damit du Ziele dazwischen einsortieren kannst.
+                  </p>
+                </div>
+              )}
 
               {node.data.level === 'goal' && (
                 <div>

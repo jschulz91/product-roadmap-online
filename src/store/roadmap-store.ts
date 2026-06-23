@@ -157,6 +157,11 @@ export const useRoadmapStore = create<RoadmapState>()(
           : { x: Math.random() * 400, y: Math.random() * 400 };
 
         const defaultTitle = level === 'goal' ? 'Neues Ziel' : level === 'feature' ? 'Neues Feature' : 'Neuer Task';
+        // Presentation order is controlled on the goal level, in steps of 10 so
+        // new goals can be slotted between existing ones later.
+        const nextGoalOrder = level === 'goal'
+          ? state.nodes.filter(n => n.data.level === 'goal').reduce((max, n) => Math.max(max, n.data.order ?? 0), 0) + 10
+          : 0;
         const newNode: RoadmapNode = {
           id,
           type: level,
@@ -172,6 +177,7 @@ export const useRoadmapStore = create<RoadmapState>()(
             collapsed: false,
             color: level === 'goal' ? DEFAULT_HEX : null,
             hours: 0,
+            order: nextGoalOrder,
             createdAt: timestamp,
             updatedAt: timestamp,
           },

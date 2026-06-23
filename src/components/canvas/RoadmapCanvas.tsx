@@ -268,7 +268,7 @@ export function RoadmapCanvas() {
       if (store.isTransitioning) return;
 
       if (roadmapNode.data.level === 'goal') {
-        const goalNodes = nodes.filter(n => n.data.level === 'goal');
+        const goalNodes = store.getGoalNodes();
         const idx = goalNodes.findIndex(g => g.id === node.id);
         store.focusGoal(node.id, idx >= 0 ? idx : 0);
       } else if (roadmapNode.data.level === 'feature') {

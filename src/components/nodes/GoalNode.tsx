@@ -39,7 +39,7 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
   return (
     <div
       className={`
-        min-w-[360px] max-w-[420px] rounded-2xl shadow-lg border-2 overflow-hidden
+        relative min-w-[360px] max-w-[420px] rounded-2xl shadow-lg border-2 overflow-hidden
         transition-all duration-200
         ${selected ? 'ring-2 ring-offset-2 ring-blue-400 dark:ring-offset-gray-900' : ''}
       `}
@@ -80,6 +80,13 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
           </div>
         )}
       </div>
+
+      <span
+        className="absolute bottom-1.5 right-2.5 text-[10px] font-semibold tabular-nums text-gray-400 dark:text-gray-500 select-none"
+        title="Reihenfolge in der Präsentation"
+      >
+        #{data.order ?? 0}
+      </span>
 
       <Handle type="source" position={Position.Bottom} id="bottom" className={handleClass} />
     </div>
