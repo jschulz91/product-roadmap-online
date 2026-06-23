@@ -3,6 +3,7 @@ import {
   ReactFlow,
   Background,
   BackgroundVariant,
+  ConnectionMode,
   MiniMap,
   type OnConnect,
   type OnReconnect,
@@ -56,12 +57,14 @@ function findGoalAncestorId(nodeId: string, nodeMap: Map<string, RoadmapNode>): 
 export function RoadmapCanvas() {
   const nodes = useRoadmapStore(s => s.nodes);
   const edges = useRoadmapStore(s => s.edges);
+  const hierarchyEdges = useRoadmapStore(s => s.hierarchyEdges);
   const viewport = useRoadmapStore(s => s.viewport);
   const getVisibleNodes = useRoadmapStore(s => s.getVisibleNodes);
   const getAllEdges = useRoadmapStore(s => s.getAllEdges);
   const updateNodePosition = useRoadmapStore(s => s.updateNodePosition);
   const addDependencyEdge = useRoadmapStore(s => s.addDependencyEdge);
   const reconnectEdge = useRoadmapStore(s => s.reconnectEdge);
+  const reconnectHierarchyEdge = useRoadmapStore(s => s.reconnectHierarchyEdge);
   const setViewport = useRoadmapStore(s => s.setViewport);
   const runAutoLayout = useRoadmapStore(s => s.runAutoLayout);
 
@@ -156,10 +159,10 @@ export function RoadmapCanvas() {
           ...rest,
           data: { style: edgeStyle ?? 'solid', direction: (rest as any).direction ?? 'forward' },
           className: edgeClassName,
-          reconnectable: rest.type === 'dependency' && !isPresentationMode,
+          reconnectable: !isPresentationMode,
         };
       }) as Edge[];
-  }, [nodes, edges, getAllEdges, visibleNodes, isPresentationMode, explorerLevel, focusedGoalId, nodeMap]);
+  }, [nodes, edges, hierarchyEdges, getAllEdges, visibleNodes, isPresentationMode, explorerLevel, focusedGoalId, nodeMap]);
 
   const onConnect: OnConnect = useCallback(({ source, target, sourceHandle, targetHandle }) => {
     if (isPresentationMode) return;
@@ -173,12 +176,18 @@ export function RoadmapCanvas() {
 
   const onReconnect: OnReconnect = useCallback((oldEdge, newConnection) => {
     if (isPresentationMode) return;
-    if (oldEdge.type !== 'dependency') return;
+    if (oldEdge.type === 'hierarchy') {
+      const success = reconnectHierarchyEdge(oldEdge.target, oldEdge.source, newConnection);
+      if (!success) {
+        addToast('Hierarchie-Linien koennen nur am selben Element verschoben werden', 'error');
+      }
+      return;
+    }
     const success = reconnectEdge(oldEdge.id, newConnection);
     if (!success) {
       addToast('Kante konnte nicht umgehaengt werden (Duplikat oder Zyklus)', 'error');
     }
-  }, [reconnectEdge, addToast, isPresentationMode]);
+  }, [reconnectEdge, reconnectHierarchyEdge, addToast, isPresentationMode]);
 
   const onNodeDragStop: OnNodeDrag = useCallback((_event, node) => {
     if (isPresentationMode) return;
@@ -219,7 +228,6 @@ export function RoadmapCanvas() {
 
   const onEdgeDoubleClick: EdgeMouseHandler = useCallback((event, edge) => {
     if (isPresentationMode) return;
-    if (edge.type !== 'dependency') return;
     event.stopPropagation();
     openEdgeMenu(edge.id);
   }, [openEdgeMenu, isPresentationMode]);
@@ -246,6 +254,7 @@ export function RoadmapCanvas() {
         edges={allEdges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        connectionMode={ConnectionMode.Loose}
         onConnect={onConnect}
         onReconnect={onReconnect}
         onNodeDragStop={onNodeDragStop}

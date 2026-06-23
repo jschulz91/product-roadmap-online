@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { RoadmapNodeData } from '../../types/roadmap';
 import { NodeStatusBadge } from './NodeStatusBadge';
+import { HoursBadge } from './HoursBadge';
 import { ProgressBar } from './ProgressBar';
 import { calculateProgress } from '../../lib/progress';
+import { calculateHours } from '../../lib/hours';
 import { useRoadmapStore } from '../../store/roadmap-store';
 import { useUIStore } from '../../store/ui-store';
 import { getNodeColorStyles } from '../../lib/node-colors';
@@ -31,6 +33,11 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
     [id, nodes]
   );
 
+  const hours = useMemo(
+    () => calculateHours(id, nodes),
+    [id, nodes]
+  );
+
   const parentNode = data.parentId ? nodes.find(n => n.id === data.parentId) : null;
   const childIndex = parentNode ? parentNode.data.childrenIds.indexOf(id) : 0;
 
@@ -51,16 +58,16 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
       `}
       style={colorStyles}
     >
-      <Handle type="target" position={Position.Top} className={handleClass} />
-      <Handle type="source" position={Position.Top} id="top-source" className={handleClass} />
-      <Handle type="target" position={Position.Left} id="left-target" className={handleClass} />
-      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
-      <Handle type="source" position={Position.Right} id="right-source" className={handleClass} />
-      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
+      <Handle type="source" position={Position.Top} id="top" className={handleClass} />
+      <Handle type="source" position={Position.Left} id="left" className={handleClass} />
+      <Handle type="source" position={Position.Right} id="right" className={handleClass} />
 
       <div style={{ padding: '16px 20px' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: '10px' }}>
-          <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
+          <div className="flex items-center gap-2">
+            <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
+            <HoursBadge hours={hours.total} />
+          </div>
           {hasChildren && (
             <button
               onClick={(e) => { e.stopPropagation(); toggleCollapse(id); }}
@@ -87,8 +94,7 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className={handleClass} />
-      <Handle type="target" position={Position.Bottom} id="bottom-target" className={handleClass} />
+      <Handle type="source" position={Position.Bottom} id="bottom" className={handleClass} />
     </div>
     </motion.div>
   );

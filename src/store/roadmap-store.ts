@@ -7,6 +7,13 @@ import { wouldCreateCycle } from '../lib/cycle-detection';
 import { applyAutoLayout } from '../lib/layout';
 import { DEFAULT_HEX } from '../lib/node-colors';
 
+interface HierarchyEdgeOverride {
+  sourceHandle?: string | null;
+  targetHandle?: string | null;
+  style?: EdgeStyle;
+  direction?: EdgeDirection;
+}
+
 interface HistoryEntry {
   nodes: RoadmapNode[];
   edges: RoadmapEdge[];
@@ -17,6 +24,7 @@ interface RoadmapState {
   projectDescription: string;
   nodes: RoadmapNode[];
   edges: RoadmapEdge[];
+  hierarchyEdges: Record<string, HierarchyEdgeOverride>;
   viewport: Viewport;
   autoLayout: boolean;
 
@@ -36,6 +44,9 @@ interface RoadmapState {
   updateEdge: (id: string, updates: { style?: EdgeStyle; label?: string; direction?: EdgeDirection }) => void;
   reconnectEdge: (oldEdgeId: string, connection: { source: string | null; target: string | null; sourceHandle?: string | null; targetHandle?: string | null }) => boolean;
   removeEdge: (id: string) => void;
+
+  updateHierarchyEdge: (childId: string, updates: HierarchyEdgeOverride) => void;
+  reconnectHierarchyEdge: (childId: string, parentId: string, connection: { source: string | null; target: string | null; sourceHandle?: string | null; targetHandle?: string | null }) => boolean;
 
   reparentNode: (nodeId: string, newParentId: string | null) => boolean;
   toggleCollapse: (nodeId: string) => void;
@@ -110,6 +121,7 @@ export const useRoadmapStore = create<RoadmapState>()(
       projectDescription: '',
       nodes: [],
       edges: [],
+      hierarchyEdges: {},
       viewport: { x: 0, y: 0, zoom: 1 },
       autoLayout: true,
 
@@ -146,6 +158,7 @@ export const useRoadmapStore = create<RoadmapState>()(
             childrenIds: [],
             collapsed: false,
             color: level === 'goal' ? DEFAULT_HEX : null,
+            hours: 0,
             createdAt: timestamp,
             updatedAt: timestamp,
           },
@@ -287,6 +300,31 @@ export const useRoadmapStore = create<RoadmapState>()(
         set({ edges: state.edges.filter(e => e.id !== id) });
       },
 
+      updateHierarchyEdge: (childId, updates) => {
+        const state = get();
+        set({
+          hierarchyEdges: {
+            ...state.hierarchyEdges,
+            [childId]: { ...state.hierarchyEdges[childId], ...updates },
+          },
+        });
+      },
+
+      reconnectHierarchyEdge: (childId, parentId, connection) => {
+        const { source, target, sourceHandle = null, targetHandle = null } = connection;
+        if (!source || !target || source === target) return false;
+        // Keep the tree structure intact: only allow moving the attachment
+        // points (handles) between the same parent and child. In loose mode the
+        // dragged end can be reported as either source or target, so map the
+        // handles back onto parent/child regardless of orientation.
+        const involved = new Set([source, target]);
+        if (!involved.has(parentId) || !involved.has(childId)) return false;
+        const parentHandle = source === parentId ? sourceHandle : targetHandle;
+        const childHandle = source === parentId ? targetHandle : sourceHandle;
+        get().updateHierarchyEdge(childId, { sourceHandle: parentHandle, targetHandle: childHandle });
+        return true;
+      },
+
       reparentNode: (nodeId, newParentId) => {
         const state = get();
         const node = state.nodes.find(n => n.id === nodeId);
@@ -381,13 +419,19 @@ export const useRoadmapStore = create<RoadmapState>()(
         const state = get();
         const hierarchyEdges: RoadmapEdge[] = state.nodes
           .filter(n => n.data.parentId)
-          .map(n => ({
-            id: `hierarchy-${n.data.parentId}-${n.id}`,
-            source: n.data.parentId!,
-            target: n.id,
-            type: 'hierarchy' as const,
-            style: 'solid' as const,
-          }));
+          .map(n => {
+            const o = state.hierarchyEdges[n.id] ?? {};
+            return {
+              id: `hierarchy-${n.data.parentId}-${n.id}`,
+              source: n.data.parentId!,
+              target: n.id,
+              sourceHandle: o.sourceHandle ?? 'bottom',
+              targetHandle: o.targetHandle ?? 'top',
+              type: 'hierarchy' as const,
+              style: o.style ?? ('solid' as const),
+              direction: o.direction ?? ('none' as const),
+            };
+          });
         return [...state.edges, ...hierarchyEdges];
       },
 
@@ -422,6 +466,7 @@ export const useRoadmapStore = create<RoadmapState>()(
           projectDescription: project.description,
           nodes: project.nodes,
           edges: project.edges,
+          hierarchyEdges: {},
           viewport: project.viewport,
           autoLayout: project.settings.autoLayout,
           history: [],
@@ -487,11 +532,41 @@ export const useRoadmapStore = create<RoadmapState>()(
     }),
     {
       name: 'roadmap-storage',
+      version: 1,
+      // v1: collapsed the per-side source/target handles (e.g. "left-target",
+      // "right-source") into a single handle per side ("top"/"right"/"bottom"/"left").
+      migrate: (persisted: any, version) => {
+        if (!persisted || version >= 1) return persisted;
+        const normHandle = (h: string | null | undefined) => {
+          if (!h) return h;
+          if (h.startsWith('left')) return 'left';
+          if (h.startsWith('right')) return 'right';
+          if (h.startsWith('top')) return 'top';
+          if (h.startsWith('bottom')) return 'bottom';
+          return h;
+        };
+        if (Array.isArray(persisted.edges)) {
+          persisted.edges = persisted.edges.map((e: any) => ({
+            ...e,
+            sourceHandle: normHandle(e.sourceHandle),
+            targetHandle: normHandle(e.targetHandle),
+          }));
+        }
+        if (persisted.hierarchyEdges && typeof persisted.hierarchyEdges === 'object') {
+          const next: Record<string, any> = {};
+          for (const [key, o] of Object.entries<any>(persisted.hierarchyEdges)) {
+            next[key] = { ...o, sourceHandle: normHandle(o?.sourceHandle), targetHandle: normHandle(o?.targetHandle) };
+          }
+          persisted.hierarchyEdges = next;
+        }
+        return persisted;
+      },
       partialize: (state) => ({
         projectName: state.projectName,
         projectDescription: state.projectDescription,
         nodes: state.nodes,
         edges: state.edges,
+        hierarchyEdges: state.hierarchyEdges,
         viewport: state.viewport,
         autoLayout: state.autoLayout,
       }),

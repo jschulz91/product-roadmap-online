@@ -5,6 +5,7 @@ import { useRoadmapStore } from '../../store/roadmap-store';
 import { useUIStore } from '../../store/ui-store';
 import { statusConfig, levelConfig } from '../../styles/theme';
 import { COLOR_PRESETS, isValidHex } from '../../lib/node-colors';
+import { calculateHours, formatHours } from '../../lib/hours';
 import type { NodeStatus } from '../../types/roadmap';
 
 export const NodeDetailPanel = memo(function NodeDetailPanel() {
@@ -23,6 +24,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
   const [subtitle, setSubtitle] = useState('');
   const [description, setDescription] = useState('');
   const [hexInput, setHexInput] = useState('');
+  const [hoursInput, setHoursInput] = useState('');
 
   useEffect(() => {
     if (node) {
@@ -30,12 +32,22 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
       setSubtitle(node.data.subtitle ?? '');
       setDescription(node.data.description);
       setHexInput(node.data.color ?? '');
+      setHoursInput(String(node.data.hours ?? 0));
     }
-  }, [node?.id, node?.data.title, node?.data.subtitle, node?.data.description, node?.data.color]);
+  }, [node?.id, node?.data.title, node?.data.subtitle, node?.data.description, node?.data.color, node?.data.hours]);
 
   if (!node) return null;
 
   const childLevel = levelConfig[node.data.level].childLevel;
+  const isLeaf = node.data.level === 'task';
+  const hours = calculateHours(node.id, nodes);
+
+  const commitHours = () => {
+    const parsed = Number(hoursInput.replace(',', '.'));
+    const value = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+    setHoursInput(String(value));
+    updateNode(node.id, { hours: value });
+  };
 
   const applyHexColor = (hex: string) => {
     if (isValidHex(hex)) {
@@ -117,6 +129,41 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
+                  {isLeaf ? 'Geplante Stunden' : 'Zusatzstunden'}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    value={hoursInput}
+                    onChange={e => setHoursInput(e.target.value)}
+                    onBlur={commitHours}
+                    onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+                    className="w-full px-3.5 py-2.5 pr-10 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400">h</span>
+                </div>
+                {!isLeaf && (
+                  <div className="mt-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+                    <div className="flex justify-between">
+                      <span>Untergeordnet</span>
+                      <span className="font-medium">{formatHours(hours.rolledUp)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Zusatz</span>
+                      <span className="font-medium">+ {formatHours(hours.own)}</span>
+                    </div>
+                    <div className="flex justify-between pt-1 mt-1 border-t border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+                      <span className="font-semibold">Gesamt</span>
+                      <span className="font-semibold">{formatHours(hours.total)}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {node.data.level === 'goal' && (

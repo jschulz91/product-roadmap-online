@@ -3,8 +3,10 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { RoadmapNodeData } from '../../types/roadmap';
 import { NodeStatusBadge } from './NodeStatusBadge';
+import { HoursBadge } from './HoursBadge';
 import { ProgressBar } from './ProgressBar';
 import { calculateProgress } from '../../lib/progress';
+import { calculateHours } from '../../lib/hours';
 import { useRoadmapStore } from '../../store/roadmap-store';
 import { useUIStore } from '../../store/ui-store';
 import { getNodeColorStyles, getAccentColor } from '../../lib/node-colors';
@@ -29,6 +31,11 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
     [id, nodes]
   );
 
+  const hours = useMemo(
+    () => calculateHours(id, nodes),
+    [id, nodes]
+  );
+
   return (
     <div
       className={`
@@ -38,16 +45,16 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
       `}
       style={colorStyles}
     >
-      <Handle type="target" position={Position.Top} className={handleClass} />
-      <Handle type="source" position={Position.Top} id="top-source" className={handleClass} />
-      <Handle type="target" position={Position.Left} id="left-target" className={handleClass} />
-      <Handle type="source" position={Position.Left} id="left-source" className={handleClass} />
-      <Handle type="source" position={Position.Right} id="right-source" className={handleClass} />
-      <Handle type="target" position={Position.Right} id="right-target" className={handleClass} />
+      <Handle type="source" position={Position.Top} id="top" className={handleClass} />
+      <Handle type="source" position={Position.Left} id="left" className={handleClass} />
+      <Handle type="source" position={Position.Right} id="right" className={handleClass} />
 
       <div style={{ padding: '20px 24px' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: '14px' }}>
-          <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
+          <div className="flex items-center gap-2">
+            <NodeStatusBadge status={data.status} onClick={() => cycleStatus(id)} />
+            <HoursBadge hours={hours.total} />
+          </div>
           {hasChildren && (
             <button
               onClick={(e) => { e.stopPropagation(); toggleCollapse(id); }}
@@ -74,8 +81,7 @@ export const GoalNode = memo(function GoalNode({ id, data, selected }: GoalNodeP
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className={handleClass} />
-      <Handle type="target" position={Position.Bottom} id="bottom-target" className={handleClass} />
+      <Handle type="source" position={Position.Bottom} id="bottom" className={handleClass} />
     </div>
   );
 });

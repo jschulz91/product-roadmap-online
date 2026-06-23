@@ -16,6 +16,7 @@ export const roadmapNodeDataSchema = z.object({
   childrenIds: z.array(z.string()).default([]),
   collapsed: z.boolean().default(false),
   color: z.string().nullable().default(null),
+  hours: z.number().min(0).default(0),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
