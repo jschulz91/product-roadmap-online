@@ -52,7 +52,7 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
     >
     <div
       className={`
-        min-w-[300px] max-w-[360px] rounded-xl shadow-md border-2 overflow-hidden
+        relative min-w-[300px] max-w-[360px] rounded-xl shadow-md border-2 overflow-hidden
         transition-all duration-200
         ${selected ? 'ring-2 ring-offset-2 ring-blue-400 dark:ring-offset-gray-900' : ''}
       `}
@@ -93,6 +93,13 @@ export const FeatureNode = memo(function FeatureNode({ id, data, selected }: Fea
           </div>
         )}
       </div>
+
+      <span
+        className="absolute bottom-1 right-2 text-[9px] font-semibold tabular-nums text-gray-400 dark:text-gray-500 select-none"
+        title="Reihenfolge in der Präsentation"
+      >
+        #{data.order ?? 0}
+      </span>
 
       <Handle type="source" position={Position.Bottom} id="bottom" className={handleClass} />
     </div>

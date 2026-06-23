@@ -49,9 +49,9 @@ export const usePresentationStore = create<PresentationState>()((set, get) => ({
   },
 
   getFeaturesOfGoal: (goalId: string) => {
-    return useRoadmapStore.getState().nodes.filter(
-      n => n.data.parentId === goalId && n.data.level === 'feature'
-    );
+    return useRoadmapStore.getState().nodes
+      .filter(n => n.data.parentId === goalId && n.data.level === 'feature')
+      .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
   },
 
   getTasksOfFeature: (featureId: string) => {

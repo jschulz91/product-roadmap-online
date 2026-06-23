@@ -28,6 +28,20 @@ function getBoundingBox(nodes: RoadmapNode[]): { x: number; y: number; width: nu
   return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 }
 
+// The Explorer info panel is a fixed sidebar on the left; keep focused content
+// clear of it so all cards stay clickable.
+const PANEL_CLEARANCE = 360;
+
+function clearInfoPanel(rf: ReactFlowInstance, boundsX: number, duration: number) {
+  const vp = rf.getViewport();
+  // Screen-x of the content's left edge = vp.x + boundsX * zoom. Shift right if
+  // it would land under the sidebar.
+  const targetX = PANEL_CLEARANCE - boundsX * vp.zoom;
+  if (vp.x < targetX) {
+    rf.setViewport({ x: targetX, y: vp.y, zoom: vp.zoom }, { duration });
+  }
+}
+
 export async function flyToOverview(rf: ReactFlowInstance): Promise<void> {
   await rf.fitView({ padding: 0.4, duration: 1000 });
 }
@@ -40,6 +54,7 @@ export async function flyToGoal(
   const allNodes = [goalNode, ...featureNodes];
   const bounds = getBoundingBox(allNodes);
   await rf.fitBounds(bounds, { padding: 0.3, duration: 800 });
+  clearInfoPanel(rf, bounds.x, 300);
 }
 
 export async function flyToFeature(
@@ -50,4 +65,5 @@ export async function flyToFeature(
   const allNodes = [featureNode, ...taskNodes];
   const bounds = getBoundingBox(allNodes);
   await rf.fitBounds(bounds, { padding: 0.25, duration: 600 });
+  clearInfoPanel(rf, bounds.x, 300);
 }

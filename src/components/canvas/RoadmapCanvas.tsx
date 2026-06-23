@@ -273,8 +273,8 @@ export function RoadmapCanvas() {
         store.focusGoal(node.id, idx >= 0 ? idx : 0);
       } else if (roadmapNode.data.level === 'feature') {
         const goalId = findGoalAncestorId(node.id, nodeMap);
-        if (goalId === store.focusedGoalId) {
-          const features = nodes.filter(n => n.data.parentId === goalId && n.data.level === 'feature');
+        if (goalId && goalId === store.focusedGoalId) {
+          const features = store.getFeaturesOfGoal(goalId);
           const idx = features.findIndex(f => f.id === node.id);
           store.focusFeature(node.id, idx >= 0 ? idx : 0);
         }

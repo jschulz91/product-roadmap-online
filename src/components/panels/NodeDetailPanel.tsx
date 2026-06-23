@@ -42,7 +42,6 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
 
   const childLevel = levelConfig[node.data.level].childLevel;
   const isLeaf = node.data.level === 'task';
-  const isGoal = node.data.level === 'goal';
   const hours = calculateHours(node.id, nodes);
 
   const commitOrder = () => {
@@ -176,7 +175,7 @@ export const NodeDetailPanel = memo(function NodeDetailPanel() {
                 )}
               </div>
 
-              {isGoal && (
+              {!isLeaf && (
                 <div>
                   <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-3">
                     Reihenfolge (Präsentation)
