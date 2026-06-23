@@ -223,6 +223,7 @@ export const demoEdges: RoadmapEdge[] = [
     targetHandle: 'left',
     type: 'dependency',
     style: 'solid',
+    direction: 'forward',
     label: 'Voraussetzung',
   },
   {
@@ -233,5 +234,6 @@ export const demoEdges: RoadmapEdge[] = [
     targetHandle: 'left',
     type: 'dependency',
     style: 'dashed',
+    direction: 'forward',
   },
 ];
