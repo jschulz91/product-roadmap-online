@@ -66,7 +66,7 @@ export function RoadmapCanvas() {
   const viewport = useRoadmapStore(s => s.viewport);
   const getVisibleNodes = useRoadmapStore(s => s.getVisibleNodes);
   const getAllEdges = useRoadmapStore(s => s.getAllEdges);
-  const updateNodePositions = useRoadmapStore(s => s.updateNodePositions);
+  const moveNodesWithDescendants = useRoadmapStore(s => s.moveNodesWithDescendants);
   const updateAreaPositions = useRoadmapStore(s => s.updateAreaPositions);
   const updateAreaRect = useRoadmapStore(s => s.updateAreaRect);
   const addDependencyEdge = useRoadmapStore(s => s.addDependencyEdge);
@@ -246,8 +246,8 @@ export function RoadmapCanvas() {
     const areaUpdates = moved.filter(n => n.type === 'area').map(n => ({ id: n.id, position: n.position }));
     const nodeUpdates = moved.filter(n => n.type !== 'area').map(n => ({ id: n.id, position: n.position }));
     if (areaUpdates.length) updateAreaPositions(areaUpdates);
-    if (nodeUpdates.length) updateNodePositions(nodeUpdates);
-  }, [updateAreaPositions, updateNodePositions]);
+    if (nodeUpdates.length) moveNodesWithDescendants(nodeUpdates);
+  }, [updateAreaPositions, moveNodesWithDescendants]);
 
   const onNodeDragStop: OnNodeDrag = useCallback((_event, node, draggedNodes) => {
     if (isPresentationMode) return;

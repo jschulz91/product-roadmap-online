@@ -54,6 +54,10 @@ interface RoadmapState {
 
   updateNodePosition: (id: string, position: { x: number; y: number }) => void;
   updateNodePositions: (updates: Array<{ id: string; position: { x: number; y: number } }>) => void;
+  moveNodesWithDescendants: (updates: Array<{ id: string; position: { x: number; y: number } }>) => void;
+
+  collapseAll: () => void;
+  expandAll: () => void;
 
   addArea: (position: { x: number; y: number }) => string;
   updateArea: (id: string, updates: Partial<Pick<RoadmapArea, 'name' | 'color'>>) => void;
@@ -412,6 +416,57 @@ export const useRoadmapStore = create<RoadmapState>()(
         }));
       },
 
+      moveNodesWithDescendants: (updates) => {
+        if (updates.length === 0) return;
+        set(state => {
+          const nodeMap = new Map(state.nodes.map(n => [n.id, n]));
+          // Target absolute positions, keyed by node id.
+          const targets = new Map<string, { x: number; y: number }>();
+          for (const u of updates) {
+            const node = nodeMap.get(u.id);
+            if (!node) continue;
+            targets.set(u.id, u.position);
+            // A collapsed node hides its subtree, so carry the whole subtree along
+            // by the same delta when it is dragged.
+            if (node.data.collapsed) {
+              const dx = u.position.x - node.position.x;
+              const dy = u.position.y - node.position.y;
+              if (dx !== 0 || dy !== 0) {
+                for (const descId of getAllDescendantIds(u.id, state.nodes)) {
+                  if (targets.has(descId)) continue;
+                  const d = nodeMap.get(descId);
+                  if (d) targets.set(descId, { x: d.position.x + dx, y: d.position.y + dy });
+                }
+              }
+            }
+          }
+          return {
+            nodes: state.nodes.map(n => {
+              const pos = targets.get(n.id);
+              return pos ? { ...n, position: pos } : n;
+            }),
+          };
+        });
+      },
+
+      collapseAll: () => {
+        set(state => ({
+          nodes: state.nodes.map(n =>
+            n.data.childrenIds.length > 0 && !n.data.collapsed
+              ? { ...n, data: { ...n.data, collapsed: true } }
+              : n
+          ),
+        }));
+      },
+
+      expandAll: () => {
+        set(state => ({
+          nodes: state.nodes.map(n =>
+            n.data.collapsed ? { ...n, data: { ...n.data, collapsed: false } } : n
+          ),
+        }));
+      },
+
       addArea: (position) => {
         const state = get();
         state.pushHistory();
@@ -473,10 +528,29 @@ export const useRoadmapStore = create<RoadmapState>()(
         const layoutedNodes = applyAutoLayout(visibleNodes, allEdges);
 
         const layoutMap = new Map(layoutedNodes.map(n => [n.id, n.position]));
+
+        // Carry the hidden subtree of each collapsed node along by the same delta
+        // its (visible) collapsed parent moved during layout.
+        const shift = new Map<string, { dx: number; dy: number }>();
+        for (const n of state.nodes) {
+          if (!n.data.collapsed) continue;
+          const newPos = layoutMap.get(n.id);
+          if (!newPos) continue;
+          const dx = newPos.x - n.position.x;
+          const dy = newPos.y - n.position.y;
+          if (dx === 0 && dy === 0) continue;
+          for (const descId of getAllDescendantIds(n.id, state.nodes)) {
+            if (!shift.has(descId)) shift.set(descId, { dx, dy });
+          }
+        }
+
         set({
           nodes: state.nodes.map(n => {
             const pos = layoutMap.get(n.id);
-            return pos ? { ...n, position: pos } : n;
+            if (pos) return { ...n, position: pos };
+            const s = shift.get(n.id);
+            if (s) return { ...n, position: { x: n.position.x + s.dx, y: n.position.y + s.dy } };
+            return n;
           }),
         });
       },

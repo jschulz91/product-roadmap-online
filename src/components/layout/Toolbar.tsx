@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Plus, LayoutGrid, Maximize, Undo2, Redo2, ZoomIn, ZoomOut, Square } from 'lucide-react';
+import { Plus, LayoutGrid, Maximize, Undo2, Redo2, ZoomIn, ZoomOut, Square, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 import { useRoadmapStore } from '../../store/roadmap-store';
 import { useUIStore } from '../../store/ui-store';
@@ -8,6 +8,8 @@ export const Toolbar = memo(function Toolbar() {
   const addNode = useRoadmapStore(s => s.addNode);
   const addArea = useRoadmapStore(s => s.addArea);
   const runAutoLayout = useRoadmapStore(s => s.runAutoLayout);
+  const collapseAll = useRoadmapStore(s => s.collapseAll);
+  const expandAll = useRoadmapStore(s => s.expandAll);
   const undo = useRoadmapStore(s => s.undo);
   const redo = useRoadmapStore(s => s.redo);
   const canUndo = useRoadmapStore(s => s.canUndo);
@@ -52,6 +54,12 @@ export const Toolbar = memo(function Toolbar() {
       </button>
       <button onClick={() => fitView({ padding: 0.2, duration: 500 })} className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors" title="Alles anzeigen (F)">
         <Maximize size={16} />
+      </button>
+      <button onClick={() => collapseAll()} className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors" title="Alle einklappen">
+        <ChevronsDownUp size={16} />
+      </button>
+      <button onClick={() => expandAll()} className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors" title="Alle ausklappen">
+        <ChevronsUpDown size={16} />
       </button>
 
       <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
