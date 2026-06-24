@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import { NodeResizer, type NodeProps } from '@xyflow/react';
+import { NodeResizer, useReactFlow, type NodeProps } from '@xyflow/react';
 import { Trash2 } from 'lucide-react';
 import { useRoadmapStore } from '../../store/roadmap-store';
 import { COLOR_PRESETS } from '../../lib/node-colors';
@@ -11,13 +11,64 @@ export const AreaNode = memo(function AreaNode({ id, data, selected }: AreaNodeP
   const updateArea = useRoadmapStore(s => s.updateArea);
   const updateAreaRect = useRoadmapStore(s => s.updateAreaRect);
   const removeArea = useRoadmapStore(s => s.removeArea);
+  const { getViewport, setViewport } = useReactFlow();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(data.name);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Auto-pan while resizing so an area can grow beyond the visible canvas.
+  const resizingRef = useRef(false);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number | null>(null);
+
   useEffect(() => { setName(data.name); }, [data.name]);
   useEffect(() => { if (editing) inputRef.current?.focus(); }, [editing]);
+
+  const onWindowPointerMove = (e: PointerEvent) => {
+    pointerRef.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const stopAutoPan = () => {
+    resizingRef.current = false;
+    window.removeEventListener('pointermove', onWindowPointerMove);
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  };
+
+  const autoPanTick = () => {
+    if (!resizingRef.current) return;
+    const el = document.querySelector('.react-flow') as HTMLElement | null;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      const margin = 56;
+      const speed = 14;
+      const { x, y } = pointerRef.current;
+      let dx = 0, dy = 0;
+      if (x > r.right - margin) dx = -speed;
+      else if (x < r.left + margin) dx = speed;
+      if (y > r.bottom - margin) dy = -speed;
+      else if (y < r.top + margin) dy = speed;
+      if (dx !== 0 || dy !== 0) {
+        const vp = getViewport();
+        setViewport({ x: vp.x + dx, y: vp.y + dy, zoom: vp.zoom });
+        // Nudge the resizer to recompute the size against the new transform.
+        window.dispatchEvent(new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
+      }
+    }
+    rafRef.current = requestAnimationFrame(autoPanTick);
+  };
+
+  const startAutoPan = () => {
+    if (resizingRef.current) return;
+    resizingRef.current = true;
+    window.addEventListener('pointermove', onWindowPointerMove);
+    rafRef.current = requestAnimationFrame(autoPanTick);
+  };
+
+  useEffect(() => () => stopAutoPan(), []);
 
   const color = data.color || '#3B82F6';
 
@@ -34,7 +85,11 @@ export const AreaNode = memo(function AreaNode({ id, data, selected }: AreaNodeP
         minHeight={80}
         lineClassName="!border-blue-400"
         handleClassName="!bg-white !border-2 !border-blue-400 !w-2.5 !h-2.5 !rounded-sm"
-        onResizeEnd={(_e, p) => updateAreaRect(id, { position: { x: p.x, y: p.y }, width: p.width, height: p.height })}
+        onResizeStart={startAutoPan}
+        onResizeEnd={(_e, p) => {
+          stopAutoPan();
+          updateAreaRect(id, { position: { x: p.x, y: p.y }, width: p.width, height: p.height });
+        }}
       />
 
       <div

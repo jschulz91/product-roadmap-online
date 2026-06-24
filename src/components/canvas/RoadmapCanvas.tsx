@@ -130,21 +130,21 @@ export function RoadmapCanvas() {
 
     return visible.map(n => {
       const goalAncestorId = findGoalAncestorId(n.id, nodeMap);
-      let dimClass: string;
 
+      // Once a goal is focused (second level and deeper), hide every other goal
+      // and its features/tasks completely instead of just dimming them.
       if (goalAncestorId !== focusedGoalId) {
-        dimClass = 'explorer-dimmed';
-      } else if (
+        return { ...n, hidden: true } as Node;
+      }
+
+      const dimClass =
         explorerLevel === 'feature' &&
         n.data.level === 'feature' &&
         n.id !== focusedFeatureId
-      ) {
-        dimClass = 'explorer-semi-dimmed';
-      } else {
-        dimClass = 'explorer-focused';
-      }
+          ? 'explorer-semi-dimmed'
+          : 'explorer-focused';
 
-      return { ...n, className: dimClass } as Node;
+      return { ...n, hidden: false, className: dimClass } as Node;
     });
   }, [nodes, getVisibleNodes, isPresentationMode, explorerLevel, focusedGoalId, focusedFeatureId, nodeMap, selectedIds]);
 
@@ -338,6 +338,7 @@ export function RoadmapCanvas() {
         defaultViewport={viewport}
         fitView
         fitViewOptions={{ padding: 0.3 }}
+        minZoom={0.15}
         connectionLineStyle={{ stroke: '#94A3B8', strokeWidth: 2, strokeDasharray: '6 3' }}
         deleteKeyCode={null}
         nodesDraggable={!isPresentationMode}
